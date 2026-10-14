@@ -7,10 +7,13 @@
  */
 
 declare(strict_types=1);
+use MyAdion\Client;
+use MyAdion\Exception\InvalidRequestError;
+use MyAdion\Exception\MyAdionException;
 
 require __DIR__.'/../vendor/autoload.php';
 
-$client = new \MyAdion\Client([
+$client = new Client([
     'client_id' => getenv('MYADION_CLIENT_ID') ?: null,
     'client_secret' => getenv('MYADION_CLIENT_SECRET') ?: null,
 ]);
@@ -24,10 +27,10 @@ try {
         'success_url' => 'https://shop.example.com/orders/4521/thanks?session_id={SESSION_ID}',
         'cancel_url' => 'https://shop.example.com/cart',
     ], ['idempotency_key' => 'order-4521']);
-} catch (\MyAdion\Exception\InvalidRequestError $e) {
+} catch (InvalidRequestError $e) {
     fwrite(STDERR, $e->getMessage().PHP_EOL.print_r($e->getErrors(), true));
     exit(1);
-} catch (\MyAdion\Exception\MyAdionException $e) {
+} catch (MyAdionException $e) {
     fwrite(STDERR, get_class($e).': '.$e->getMessage().PHP_EOL);
     exit(1);
 }

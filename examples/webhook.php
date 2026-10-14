@@ -7,6 +7,9 @@
  */
 
 declare(strict_types=1);
+use MyAdion\Event;
+use MyAdion\Exception\SignatureVerificationError;
+use MyAdion\Webhook;
 
 require __DIR__.'/../vendor/autoload.php';
 
@@ -14,19 +17,19 @@ $payload = (string) file_get_contents('php://input'); // the raw body, never re-
 $signature = $_SERVER['HTTP_ADION_SIGNATURE'] ?? '';
 
 try {
-    $event = \MyAdion\Webhook::constructEvent($payload, $signature, (string) getenv('MYADION_WEBHOOK_SECRET'));
-} catch (\MyAdion\Exception\SignatureVerificationError|\UnexpectedValueException $e) {
+    $event = Webhook::constructEvent($payload, $signature, (string) getenv('MYADION_WEBHOOK_SECRET'));
+} catch (SignatureVerificationError|UnexpectedValueException $e) {
     http_response_code(400);
     exit;
 }
 
 // The same event may arrive twice: remember $event->id and skip what you already handled.
 switch ($event->type) {
-    case \MyAdion\Event::PAYMENT_SUCCEEDED:
+    case Event::PAYMENT_SUCCEEDED:
         $payment = $event->dataObject();
         // mark the order $payment->reference as paid
         break;
-    case \MyAdion\Event::REFUND_SUCCEEDED:
+    case Event::REFUND_SUCCEEDED:
         // record the refund
         break;
 }
