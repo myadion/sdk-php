@@ -172,7 +172,7 @@ Les tests tournent contre une fausse API servie en local par `php -S` ; ils n'ap
 
 - Guides : [docs.myadion.com](https://docs.myadion.com/api/bibliotheques)
 - Référence de l'API : [adion-api.eu](https://adion-api.eu)
-- Bibliothèque Node.js : [myadion/adion-node](https://github.com/myadion/adion-node)
+- Bibliothèque Node.js : [myadion/sdk-node](https://github.com/myadion/sdk-node)
 
 ## Licence
 

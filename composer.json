@@ -3,18 +3,18 @@
     "description": "Official PHP library for the Adion Cloud API: Adion Pay, SMS and every other endpoint.",
     "type": "library",
     "keywords": ["adion", "myadion", "adion cloud", "adion pay", "payments", "sms", "api", "sdk"],
-    "homepage": "https://github.com/myadion/adion-php",
+    "homepage": "https://github.com/myadion/sdk-php",
     "license": "MIT",
     "authors": [
         {
             "name": "Adion",
-            "email": "hello@myadion.com",
+            "email": "help@myadion.com",
             "homepage": "https://myadion.com"
         }
     ],
     "support": {
-        "issues": "https://github.com/myadion/adion-php/issues",
-        "source": "https://github.com/myadion/adion-php",
+        "issues": "https://github.com/myadion/sdk-php/issues",
+        "source": "https://github.com/myadion/sdk-php",
         "docs": "https://docs.myadion.com/api/bibliotheques"
     },
     "require": {
