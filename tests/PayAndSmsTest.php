@@ -31,6 +31,30 @@ final class PayAndSmsTest extends TestCase
         $this->assertSame($session->toArray(), $again->toArray());
     }
 
+    public function test_an_embedded_session_gives_a_client_secret_and_no_url(): void
+    {
+        $client = self::client();
+        $session = $client->pay->sessions->create([
+            'amount_cents' => 4990,
+            'description' => 'Order 4521',
+            'ui_mode' => 'embedded',
+            'return_url' => 'https://shop.example.com/orders/4521/thanks',
+        ]);
+
+        $this->assertSame('embedded', $session->ui_mode);
+        $this->assertNull($session->url);
+        $this->assertSame('https://shop.example.com/orders/4521/thanks', $session->return_url);
+        $this->assertMatchesRegularExpression('/^[A-Za-z0-9]{10}_secret_[A-Za-z0-9]{32}$/', (string) $session->client_secret);
+
+        try {
+            $client->pay->sessions->create(['amount_cents' => 4990, 'description' => 'Order 4521', 'ui_mode' => 'embedded', 'success_url' => 'https://shop.example.com/thanks']);
+            $this->fail('success_url belongs to the hosted mode.');
+        } catch (InvalidRequestError $e) {
+            $this->assertSame(422, $e->getCode());
+            $this->assertNotSame([], $e->getFieldErrors('success_url'));
+        }
+    }
+
     public function test_an_explicit_idempotency_key_returns_the_same_session(): void
     {
         $client = self::client();

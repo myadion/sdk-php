@@ -58,6 +58,34 @@ header('Location: '.$session->url);
 
 Paid, the buyer comes back to `success_url?session_id=pay_sess_…` (or `{SESSION_ID}` in your URL is replaced). That return proves nothing: wait for the `payment.succeeded` webhook, or read the session again.
 
+#### Embedded payment form
+
+To keep the buyer on your page, create the session with `ui_mode` set to `embedded`. It has no `url`, but a `client_secret` of its own that your page hands to Adion's script; the card form lives in an iframe served by `pay.adioncloud.com`, so card data never touches your page. `return_url` replaces `success_url` and `cancel_url`. Declare the origin of your page first (client space › Pay account › Integration tab).
+
+```php
+$session = $client->pay->sessions->create([
+    'amount_cents' => 4990,
+    'description' => 'Order 4521',
+    'reference' => 'ORDER-4521',
+    'ui_mode' => 'embedded',
+    'return_url' => 'https://shop.example.com/orders/4521/thanks',
+], ['idempotency_key' => 'order-4521']);
+
+echo json_encode(['clientSecret' => $session->client_secret]);
+```
+
+```html
+<div id="payment"></div>
+<script src="https://pay.adioncloud.com/v1/adion-pay.js"></script>
+<script type="module">
+  const { clientSecret } = await (await fetch('/checkout/session', { method: 'POST' })).json()
+  const checkout = await AdionPay().initEmbeddedCheckout({ clientSecret, onComplete: () => location.assign('/orders/4521/thanks') })
+  checkout.mount('#payment')
+</script>
+```
+
+The `client_secret` only opens this session, and expires with it. As with the redirect, `onComplete` proves nothing: the `payment.succeeded` webhook does.
+
 Objects read as properties or as array keys: `$session->url`, `$session['url']`, `$payment->metadata->order_id`, `$payment->toArray()`.
 
 ### Adion Pay

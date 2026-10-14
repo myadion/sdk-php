@@ -188,8 +188,14 @@ function handle(array &$state, string $method, string $uri, array $headers, arra
         if (! is_string($body['description'] ?? null) || $body['description'] === '') {
             $errors['description'] = ['Le champ description est obligatoire.'];
         }
-        if (! is_string($body['success_url'] ?? null) || ! str_starts_with($body['success_url'], 'https://')) {
+        $embedded = ($body['ui_mode'] ?? 'hosted') === 'embedded';
+        if ($embedded && isset($body['success_url'])) {
+            $errors['success_url'] = ['Le champ success url est interdit quand ui mode vaut embedded.'];
+        } elseif (! $embedded && (! is_string($body['success_url'] ?? null) || ! str_starts_with($body['success_url'], 'https://'))) {
             $errors['success_url'] = ['Le champ success url doit être une adresse https.'];
+        }
+        if (! $embedded && isset($body['return_url'])) {
+            $errors['return_url'] = ['Le champ return url est interdit sauf si ui mode vaut embedded.'];
         }
         if ($errors !== []) {
             respond(422, error_body(422, reset($errors)[0], $errors));
@@ -211,15 +217,16 @@ function handle(array &$state, string $method, string $uri, array $headers, arra
         }
         $id = random_id('pay_sess_');
         $session = [
-            'id' => $id, 'object' => 'pay.session', 'url' => 'https://pay.example.test/'.substr($id, 9),
-            'status' => 'open', 'amount_cents' => $body['amount_cents'], 'currency' => 'eur',
+            'id' => $id, 'object' => 'pay.session', 'url' => $embedded ? null : 'https://pay.example.test/'.substr($id, 9),
+            'ui_mode' => $embedded ? 'embedded' : 'hosted', 'status' => 'open', 'amount_cents' => $body['amount_cents'], 'currency' => 'eur',
             'description' => $body['description'], 'reference' => $body['reference'] ?? null,
             'metadata' => $body['metadata'] ?? new stdClass, 'customer_email' => $body['customer_email'] ?? null,
-            'success_url' => $body['success_url'], 'cancel_url' => $body['cancel_url'] ?? null,
+            'success_url' => $body['success_url'] ?? null, 'cancel_url' => $body['cancel_url'] ?? null,
+            'return_url' => $body['return_url'] ?? null,
             'pay_account_id' => 'pay_acct_TestAccount01', 'payment_id' => null, 'payment_status' => null,
             'livemode' => false, 'expires_at' => '2026-10-15T10:00:00+00:00', 'completed_at' => null,
             'created_at' => '2026-10-14T10:00:00+00:00',
-        ];
+        ] + ($embedded ? ['client_secret' => substr($id, 9, 10).'_secret_'.str_repeat('A', 32)] : []);
         $state['sessions'][$id] = $session;
         if ($key !== '') {
             $state['idempotency'][$key] = ['hash' => $hash, 'id' => $id];
