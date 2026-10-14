@@ -1,0 +1,87 @@
+{
+    "name": "myadion/sdk",
+    "description": "Official PHP library for the Adion Cloud API: Adion Pay, SMS and every other endpoint.",
+    "type": "library",
+    "keywords": ["adion", "myadion", "adion cloud", "adion pay", "payments", "sms", "api", "sdk"],
+    "homepage": "https://github.com/myadion/adion-php",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Adion",
+            "email": "hello@myadion.com",
+            "homepage": "https://myadion.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/myadion/adion-php/issues",
+        "source": "https://github.com/myadion/adion-php",
+        "docs": "https://docs.myadion.com/api/bibliotheques"
+    },
+    "require": {
+        "php": "^8.1",
+        "ext-json": "*",
+        "nyholm/psr7": "^1.8",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.1 || ^2.0"
+    },
+    "require-dev": {
+        "guzzlehttp/guzzle": "^7.8",
+        "illuminate/config": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/container": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+        "laravel/pint": "^1.13",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0"
+    },
+    "conflict": {
+        "guzzlehttp/guzzle": "<7.0"
+    },
+    "suggest": {
+        "ext-curl": "Used by the built-in HTTP client when Guzzle is not installed.",
+        "guzzlehttp/guzzle": "Used automatically as the HTTP client when installed."
+    },
+    "autoload": {
+        "psr-4": {
+            "MyAdion\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MyAdion\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MyAdion\\Laravel\\MyAdionServiceProvider"
+            ],
+            "aliases": {
+                "MyAdion": "MyAdion\\Laravel\\Facades\\MyAdion"
+            }
+        }
+    },
+    "scripts": {
+        "lint": "pint --test",
+        "fix": "pint",
+        "analyse": "phpstan analyse --memory-limit=1G --no-progress",
+        "unit": "phpunit",
+        "test": [
+            "@lint",
+            "@analyse",
+            "@unit"
+        ]
+    },
+    "scripts-descriptions": {
+        "lint": "Check the code style (Pint).",
+        "fix": "Fix the code style.",
+        "analyse": "Static analysis (PHPStan, level 8).",
+        "unit": "Run the PHPUnit suite against a local fake server.",
+        "test": "Style, static analysis and tests."
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
