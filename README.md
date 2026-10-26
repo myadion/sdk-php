@@ -290,7 +290,7 @@ The tests run against a fake API served locally by `php -S` (`tests/Fixtures/ser
 
 ## Links
 
-- Guides: [docs.myadion.com](https://docs.myadion.com/api/bibliotheques)
+- Guides: [docs.myadion.com](https://docs.myadion.com/api/libraries)
 - API reference: [adion-api.eu](https://adion-api.eu)
 - Node.js library: [myadion/sdk-node](https://github.com/myadion/sdk-node)
 - Security: see [SECURITY.md](SECURITY.md)
